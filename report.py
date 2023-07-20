@@ -14,17 +14,24 @@
 
 """ Simple pretty-printing of generated insights. """
 
+from datetime import timedelta
+
 import humanize
 
 def print_daily_totals(data):
-    # Print insights in the form of date -> timedelta
+    """ Print insights in the form of date -> timedelta """
+    cumulative_time = timedelta(minutes=0)
     for (day, minutes) in data.items():
+        cumulative_time = cumulative_time + minutes
         date = humanize.naturaldate(day)
         total_time = humanize.precisedelta(minutes, minimum_unit='minutes')
         print(f"{date}: {total_time}")
+        total_time = humanize.precisedelta(cumulative_time, minimum_unit='minutes')
+    print(f"Total: {total_time}")
+
 
 def print_labeled_totals(data):
-    # Print insights in the form of string -> timedelta
+    """ Print insights in the form of string -> timedelta """
     for (label, minutes) in data.items():
         total_time = humanize.precisedelta(minutes, minimum_unit='minutes')
         print(f"{label}: {total_time}")
@@ -47,5 +54,5 @@ def print_report(data):
     print_daily_totals(data.get('dailyTimeWasted', {}))
     print("\n")
 
-    print("Total time with people:")
+    print("Total time spent per people:")
     print_labeled_totals(data.get('totalTimePerPerson', {}))

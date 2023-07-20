@@ -123,7 +123,7 @@ class DailyTimeWasted(Insight):
 
         end_of_day = datetime.combine(day, self._working_hours.end)
         duration = duration + gap_if_wasted(end_of_day, previous_end)
-        return duration.total_seconds()
+        return duration
 
     def generate(self):
         return {day: self._calculate_day(day, events) for (day, events) in self._days.items()}
