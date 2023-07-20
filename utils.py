@@ -54,17 +54,22 @@ def attendees_without_resources(event):
     attendees = [a for a in attendees if not a.get('resource', False)]
     return attendees
 
-def response_status(event):
+def did_attendee_accept(attendee):
+    """ Check if the given attendee accepted """
+    return attendee.get('responseStatus', 'needsAction') == 'accepted'
+
+def self_attendee(event):
     """Gets the response status for the current user/event."""
     attendees = event.get('attendees', [])
     for attendee in attendees:
         if attendee.get('self', False):
-            return attendee.get('responseStatus', 'needsAction')
+            return attendee
     return None
 
 def is_accepted(event):
     """Check if the current user accepted the event."""
-    return response_status(event) == 'accepted'
+    attendee = self_attendee(event)
+    return did_attendee_accept(attendee)
 
 def is_confirmed(event):
     """Check if the event has been confirmed or not."""

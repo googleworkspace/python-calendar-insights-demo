@@ -17,7 +17,7 @@ from datetime import datetime, timedelta, time
 from dataclasses import dataclass
 
 from utils import attendees_without_resources, end_time, is_accepted, is_confirmed, is_group_meeting
-from utils import is_meeting, is_one_on_one, start_time
+from utils import is_meeting, is_one_on_one, start_time, did_attendee_accept
 
 class Insight:
     """ Base class for calculating an insight."""
@@ -142,12 +142,17 @@ class MostFrequentAttendees(Insight):
 
         attendees = attendees_without_resources(event)
         for attendee in attendees:
-            key = attendee.get('displayName')
+            if not did_attendee_accept(attendee): # Ignore people that did not accept
+                continue
+            if attendee.get('self', False): # Ignore self
+                continue
+            key = attendee.get('email')
             total = self._people.get(key, timedelta(minutes=0)) + duration
             self._people[key] = total
 
     def generate(self):
-        return self._people
+        sorted_by_time = sorted(self._people.items(), key=lambda item: item[1], reverse=True)
+        return dict(sorted_by_time)
 
 @dataclass
 class WorkingHours:
