@@ -3,6 +3,8 @@
 This is a small python demo that calculates insights using the
 Google Calendar API.
 
+Note: This is not an official Google product. 
+
 ## Usage
 
 Requires an access token authorized with any of the following scopes:
