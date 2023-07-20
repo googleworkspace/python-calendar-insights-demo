@@ -24,11 +24,12 @@ def print_daily_totals(data, label_width=15):
     for (day, minutes) in data.items():
         cumulative_time = cumulative_time + minutes
         label = F"{humanize.naturaldate(day, )}:".ljust(label_width)
-        total_time = humanize.precisedelta(minutes, minimum_unit='minutes')
-        print(f"{label} {total_time}")
-        total_time = humanize.precisedelta(cumulative_time, minimum_unit='minutes')
+        formatted_time = humanize.precisedelta(minutes, minimum_unit='minutes')
+        print(f"{label} {formatted_time}")
+
+    formatted_time = humanize.precisedelta(cumulative_time, minimum_unit='minutes')
     label = "Total:".ljust(label_width)
-    print(f"{label} {total_time}")
+    print(f"{label} {formatted_time}")
 
 
 def print_labeled_totals(data, label_width=30):
