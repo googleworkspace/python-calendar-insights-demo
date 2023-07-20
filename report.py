@@ -23,7 +23,7 @@ def print_daily_totals(data, label_width=15):
     cumulative_time = timedelta(minutes=0)
     for (day, minutes) in data.items():
         cumulative_time = cumulative_time + minutes
-        label = F"{humanize.naturaldate(day)}:".ljust(label_width)
+        label = F"{humanize.naturaldate(day, )}:".ljust(label_width)
         total_time = humanize.precisedelta(minutes, minimum_unit='minutes')
         print(f"{label} {total_time}")
         total_time = humanize.precisedelta(cumulative_time, minimum_unit='minutes')
@@ -34,7 +34,7 @@ def print_daily_totals(data, label_width=15):
 def print_labeled_totals(data, label_width=30):
     """ Print insights in the form of string -> timedelta """
     for (label, minutes) in data.items():
-        formatted_label = f"{label}:".ljust(30) if label is not None else '(unknown):'.ljust(label_width)
+        formatted_label = f"{label}:".ljust(label_width)
         total_time = humanize.precisedelta(minutes, minimum_unit='minutes')
         print(f"{formatted_label} {total_time}")
 
