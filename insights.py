@@ -179,7 +179,7 @@ class Insights:
             DailyTimeWasted('dailyTimeWasted', working_hours),
             MostFrequentAttendees('totalTimePerPerson', working_hours),
         ]
-        
+
     def process(self, event):
         """ Processes a calendar event.
         
