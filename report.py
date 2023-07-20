@@ -18,6 +18,7 @@ from datetime import timedelta
 
 import humanize
 
+
 def print_daily_totals(data, label_width=15):
     """ Print insights in the form of date -> timedelta """
     cumulative_time = timedelta(minutes=0)
@@ -38,6 +39,7 @@ def print_labeled_totals(data, label_width=30):
         formatted_label = f"{label}:".ljust(label_width)
         total_time = humanize.precisedelta(minutes, minimum_unit='minutes')
         print(f"{formatted_label} {total_time}")
+
 
 def print_report(data):
     """ Pretty-print known generated insights """

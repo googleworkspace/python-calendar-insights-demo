@@ -19,6 +19,7 @@ from dataclasses import dataclass
 from utils import attendees_without_resources, end_time, is_accepted, is_confirmed, is_group_meeting
 from utils import is_meeting, is_one_on_one, start_time, did_attendee_accept
 
+
 class Insight:
     """ Base class for calculating an insight."""
 
@@ -50,6 +51,7 @@ class Insight:
         """ Generates the insight data. """
         return {}
 
+
 class DailyTimeInMeetings(Insight):
     """ Computes the total time spent in meetings for each day. """
 
@@ -68,6 +70,7 @@ class DailyTimeInMeetings(Insight):
     def generate(self):
         return self._days
 
+
 class DailyTimeInOneOnOne(DailyTimeInMeetings):
     """ Computes the total time spent in 1-on-1 meetings for each day. """
 
@@ -76,6 +79,7 @@ class DailyTimeInOneOnOne(DailyTimeInMeetings):
             return False
         return super().filter(event)
 
+
 class DailyTimeInGroupMeetings(DailyTimeInMeetings):
     """ Computes the total time spent in group (3+ people) meetings for each day. """
 
@@ -83,6 +87,7 @@ class DailyTimeInGroupMeetings(DailyTimeInMeetings):
         if not is_group_meeting(event):
             return False
         return super().filter(event)
+
 
 class DailyTimeWasted(Insight):
     """ Computes the total time lost to short breaks between meetings for each day.
@@ -128,6 +133,7 @@ class DailyTimeWasted(Insight):
     def generate(self):
         return {day: self._calculate_day(day, events) for (day, events) in self._days.items()}
 
+
 class MostFrequentAttendees(Insight):
     """ Calculates the total time spent with each person the user meets with. """
 
@@ -154,11 +160,13 @@ class MostFrequentAttendees(Insight):
         sorted_by_time = sorted(self._people.items(), key=lambda item: item[1], reverse=True)
         return dict(sorted_by_time)
 
+
 @dataclass
 class WorkingHours:
     """ Working hours for a user. """
     start: time
     end: time
+
 
 class Insights:
     """ Calculates a set of insights from a user's calendar. """

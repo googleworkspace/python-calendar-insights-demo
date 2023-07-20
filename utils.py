@@ -16,6 +16,7 @@
 
 from datetime import datetime
 
+
 def start_time(event):
     """Gets the start time of an event if present.
     
@@ -26,6 +27,7 @@ def start_time(event):
         return None
     return datetime.fromisoformat(start)
 
+
 def end_time(event):
     """Gets the end time of an event if present.
     
@@ -35,6 +37,7 @@ def end_time(event):
     if end is None:
         return None
     return datetime.fromisoformat(end)
+
 
 def is_meeting(event):
     """Checks if an event represent a meeting.
@@ -48,15 +51,18 @@ def is_meeting(event):
     start = start_time(event)
     return start is not None
 
+
 def attendees_without_resources(event):
     """Gets the human attendees for an event."""
     attendees = event.get('attendees', [])
     attendees = [a for a in attendees if not a.get('resource', False)]
     return attendees
 
+
 def did_attendee_accept(attendee):
     """ Check if the given attendee accepted """
     return attendee.get('responseStatus', 'needsAction') == 'accepted'
+
 
 def self_attendee(event):
     """Gets the response status for the current user/event."""
@@ -66,14 +72,17 @@ def self_attendee(event):
             return attendee
     return None
 
+
 def is_accepted(event):
     """Check if the current user accepted the event."""
     attendee = self_attendee(event)
     return did_attendee_accept(attendee)
 
+
 def is_confirmed(event):
     """Check if the event has been confirmed or not."""
     return event.get('status', 'tentative') == 'confirmed'
+
 
 def is_one_on_one(event):
     """Check if the event is (probably) a 1-on-1 meeting.
@@ -89,6 +98,7 @@ def is_one_on_one(event):
         return False
     
     return True
+
 
 def is_group_meeting(event):
     """Check if the event is a group meeting with 3+ attendees.
