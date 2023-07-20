@@ -1,5 +1,5 @@
 # Copyright 2023 Google LLC
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -96,7 +96,7 @@ def is_one_on_one(event):
     attendees = attendees_without_resources(event)
     if len(attendees) != 2:
         return False
-    
+
     return True
 
 
@@ -112,6 +112,5 @@ def is_group_meeting(event):
     attendees = attendees_without_resources(event)
     if len(attendees) <= 2:
         return False
-        
-    return True
 
+    return True

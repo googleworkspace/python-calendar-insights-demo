@@ -1,5 +1,5 @@
 # Copyright 2023 Google LLC
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -57,7 +57,7 @@ class DailyTimeInMeetings(Insight):
 
     def __init__(self, name, working_hours):
         super().__init__(name, working_hours)
-        self._days = dict()
+        self._days = {}
 
     def _on_event(self, event):
         start = start_time(event)
@@ -98,13 +98,13 @@ class DailyTimeWasted(Insight):
 
     def __init__(self, name, working_hours):
         super().__init__(name, working_hours)
-        self._days = dict()
+        self._days = {}
 
     def _on_event(self, event):
-        start = start_time(event)        
+        start = start_time(event)
         day = start.date()
 
-        events = self._days.get(day, []) 
+        events = self._days.get(day, [])
         events.append(event) # Defer calculation until generating data.
         self._days[day] = events
 
@@ -117,7 +117,7 @@ class DailyTimeWasted(Insight):
         def gap_if_wasted(start, end):
             gap = start - end
             gap_in_seconds = gap.total_seconds()
-            if gap_in_seconds > 0 and gap_in_seconds < 3600:
+            if 0 < gap_in_seconds < 3600:
                 return gap
             return timedelta(minutes=0)
 
@@ -139,11 +139,11 @@ class MostFrequentAttendees(Insight):
 
     def __init__(self, name, working_hours):
         super().__init__(name, working_hours)
-        self._people = dict()
+        self._people = {}
 
     def _on_event(self, event):
         start = start_time(event)
-        end = end_time(event)        
+        end = end_time(event)
         duration = end - start
 
         attendees = attendees_without_resources(event)

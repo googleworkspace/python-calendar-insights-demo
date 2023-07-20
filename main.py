@@ -49,43 +49,49 @@ TIME_ZONE = 'America/Denver'
 START_OF_DAY = 9 # 24 hour clock
 END_OF_DAY = 18 # 24 hour clock
 
-tz = ZoneInfo(TIME_ZONE)
-working_hours = WorkingHours(
-    time(hour=START_OF_DAY, tzinfo=tz),
-    time(hour=END_OF_DAY, tzinfo=tz)
-)
+def main():
+    """ Generate and print calendar insights. """
+    time_zone = ZoneInfo(TIME_ZONE)
+    working_hours = WorkingHours(
+        time(hour=START_OF_DAY, tzinfo=time_zone),
+        time(hour=END_OF_DAY, tzinfo=time_zone)
+    )
 
-insights = Insights(working_hours)
+    insights = Insights(working_hours)
 
-# Create the credentials & API client
-credentials = google.oauth2.credentials.Credentials(sys.argv[1])
-service = build('calendar', 'v3', credentials=credentials)
+    # Create the credentials & API client
+    credentials = google.oauth2.credentials.Credentials(sys.argv[1])
+    service = build('calendar', 'v3', credentials=credentials)
 
-# Limit the calendar search to current week
-now = datetime.now(tz).replace(hour=0, minute=0, second=0, microsecond=0)
-start = now - timedelta(days=now.weekday())
-end = start + timedelta(days=7)
+    # Limit the calendar search to current week
+    now = datetime.now(time_zone).replace(hour=0, minute=0, second=0, microsecond=0)
+    start = now - timedelta(days=now.weekday())
+    end = start + timedelta(days=7)
 
-next_page_token = None
+    next_page_token = None
 
-while True:
-    # Fetch events
-    results = service.events().list(calendarId='primary', # pylint: disable=no-member
-                                    pageToken=next_page_token,
-                                    timeMin=start.isoformat(),
-                                    timeMax=end.isoformat(),
-                                    maxResults=1000,
-                                    singleEvents=True,
-                                    orderBy='startTime').execute()
-    events = results.get('items', [])
+    while True:
+        # Fetch events
+        results = service.events().list(calendarId='primary', # pylint: disable=no-member
+                                        pageToken=next_page_token,
+                                        timeMin=start.isoformat(),
+                                        timeMax=end.isoformat(),
+                                        maxResults=1000,
+                                        singleEvents=True,
+                                        orderBy='startTime').execute()
+        events = results.get('items', [])
 
-    for event in events:
-        insights.process(event)
+        for event in events:
+            insights.process(event)
 
-    next_page_token = results.get('nextPageToken', None)
-    if next_page_token is None:
-        break
+        next_page_token = results.get('nextPageToken', None)
+        if next_page_token is None:
+            break
 
-# Generate and print the insights
-data = insights.generate()
-print_report(data)
+    # Generate and print the insights
+    data = insights.generate()
+    print_report(data)
+
+
+if __name__ == "__main__":
+    main()
