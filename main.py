@@ -51,8 +51,7 @@ END_OF_DAY = 18 # 24 hour clock
 tz = ZoneInfo(TIME_ZONE)
 working_hours = WorkingHours(
     time(hour=START_OF_DAY, tzinfo=tz),
-    time(hour=END_OF_DAY, tzinfo=tz),
-    tz
+    time(hour=END_OF_DAY, tzinfo=tz)
 )
 
 insights = Insights(working_hours)

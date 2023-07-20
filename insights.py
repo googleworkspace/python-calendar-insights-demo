@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """ Generates insights from a series of calendar events. """
-from datetime import datetime, timedelta, time, timezone
+from datetime import datetime, timedelta, time
 from dataclasses import dataclass
 
 from utils import attendees_without_resources, end_time, is_accepted, is_confirmed, is_group_meeting
@@ -135,7 +135,7 @@ class MostFrequentAttendees(Insight):
         super().__init__(name, working_hours)
         self._people = dict()
 
-    def _onEvent(self, event):
+    def _on_event(self, event):
         start = start_time(event)
         end = end_time(event)        
         duration = end - start
@@ -154,7 +154,6 @@ class WorkingHours:
     """ Working hours for a user. """
     start: time
     end: time
-    time_zone: timezone
 
 class Insights:
     """ Calculates a set of insights from a user's calendar. """
