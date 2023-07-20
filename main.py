@@ -43,6 +43,7 @@ from insights import Insights, WorkingHours
 from report import print_report
 
 
+# Note: Working hours are not currently exposed as part of the Calendar API
 # Adjust as necessary
 TIME_ZONE = 'America/Denver'
 START_OF_DAY = 9 # 24 hour clock
@@ -61,17 +62,18 @@ credentials = google.oauth2.credentials.Credentials(sys.argv[1])
 service = build('calendar', 'v3', credentials=credentials)
 
 # Limit the calendar search to current week
-now = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+now = datetime.now(tz).replace(hour=0, minute=0, second=0, microsecond=0)
 start = now - timedelta(days=now.weekday())
 end = start + timedelta(days=7)
 
 next_page_token = None
+
 while True:
     # Fetch events
     results = service.events().list(calendarId='primary', # pylint: disable=no-member
                                     pageToken=next_page_token,
-                                    timeMin=start.isoformat() + 'Z',
-                                    timeMax=end.isoformat() + 'Z',
+                                    timeMin=start.isoformat(),
+                                    timeMax=end.isoformat(),
                                     maxResults=1000,
                                     singleEvents=True,
                                     orderBy='startTime').execute()
