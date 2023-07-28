@@ -34,23 +34,15 @@ class Insight:
         Default behavior restricts to accepted/confirmed events with defined start/ends.
         """
         if not is_meeting(event):
-            print("Not meeting")
-            print(event)
             return False
 
         if not is_accepted(event):
-            print("Not accepted")
-            print(event)
             return False
 
         if not is_confirmed(event):
-            print("Not confirmed")
-            print(event)
             return False
 
         if not is_busy(event):
-            print("Not busy")
-            print(event)
             return False
 
         return True
