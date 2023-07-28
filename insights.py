@@ -16,7 +16,8 @@
 from datetime import datetime, timedelta, time
 from dataclasses import dataclass
 
-from utils import attendees_without_resources, end_time, is_accepted, is_confirmed, is_group_meeting
+from utils import attendees_without_resources, end_time, is_accepted, is_busy, is_confirmed
+from utils import is_group_meeting, is_pending, time_range
 from utils import is_meeting, is_one_on_one, start_time, did_attendee_accept
 
 
@@ -32,7 +33,27 @@ class Insight:
         
         Default behavior restricts to accepted/confirmed events with defined start/ends.
         """
-        return is_meeting(event) and is_accepted(event) and is_confirmed(event)
+        if not is_meeting(event):
+            print("Not meeting")
+            print(event)
+            return False
+
+        if not is_accepted(event):
+            print("Not accepted")
+            print(event)
+            return False
+
+        if not is_confirmed(event):
+            print("Not confirmed")
+            print(event)
+            return False
+
+        if not is_busy(event):
+            print("Not busy")
+            print(event)
+            return False
+
+        return True
 
     def process(self, event):
         """ Processes a calendar event.
@@ -58,14 +79,28 @@ class DailyTimeInMeetings(Insight):
     def __init__(self, name, working_hours):
         super().__init__(name, working_hours)
         self._days = {}
+        self._previous_interval = None
 
     def _on_event(self, event):
-        start = start_time(event)
-        end = end_time(event)
-        duration = end - start
+        interval = time_range(event)
 
-        day = start.date()
+        if interval is None:
+            return
+
+        if self._previous_interval is None or not interval.overlaps(self._previous_interval):
+            # Non overlapping range, add as is
+            self._previous_interval = interval
+            day = interval.date()
+            self._days[day] = interval.duration() + self._days.get(day, timedelta(minutes=0))
+            return
+
+        # Range overlaps, add only the additional time from the new event
+        merged_interval = self._previous_interval.merge(interval)
+        duration = merged_interval.duration() - self._previous_interval.duration()
+
+        day = merged_interval.date()
         self._days[day] = duration + self._days.get(day, timedelta(minutes=0))
+        self._previous_interval = merged_interval
 
     def generate(self):
         return self._days
@@ -88,6 +123,11 @@ class DailyTimeInGroupMeetings(DailyTimeInMeetings):
             return False
         return super().filter(event)
 
+class DailyTimeInUnconfirmedMeetings(DailyTimeInMeetings):
+    """ Computes the total time spent in group (3+ people) meetings for each day. """
+
+    def filter(self, event):
+        return is_meeting(event) and is_pending(event)
 
 class DailyTimeWasted(Insight):
     """ Computes the total time lost to short breaks between meetings for each day.
@@ -142,9 +182,8 @@ class MostFrequentAttendees(Insight):
         self._people = {}
 
     def _on_event(self, event):
-        start = start_time(event)
-        end = end_time(event)
-        duration = end - start
+        interval = time_range(event)
+        duration = interval.duration()
 
         attendees = attendees_without_resources(event)
         for attendee in attendees:
@@ -176,6 +215,7 @@ class Insights:
             DailyTimeInMeetings('dailyTimeInMeetings', working_hours),
             DailyTimeInGroupMeetings('dailyTimeInGroupMeetings', working_hours),
             DailyTimeInOneOnOne('dailyTimeInOneOnOne', working_hours),
+            DailyTimeInUnconfirmedMeetings('dailyTimeUnconfirmed', working_hours),
             DailyTimeWasted('dailyTimeWasted', working_hours),
             MostFrequentAttendees('totalTimePerPerson', working_hours),
         ]

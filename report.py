@@ -55,6 +55,10 @@ def print_report(data):
     print_daily_totals(data.get('dailyTimeInGroupMeetings', {}))
     print("\n")
 
+    print("Time per day unconfirmed meetings:")
+    print_daily_totals(data.get('dailyTimeUnconfirmed', {}))
+    print("\n")
+
     print("Time per day lost to < 1 hour gaps between meetings:")
     print_daily_totals(data.get('dailyTimeWasted', {}))
     print("\n")
