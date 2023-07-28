@@ -200,8 +200,6 @@ def is_one_on_one(event):
     
     Note there are edge cases where this check is not accurate, such
     as a meeting where one of the two participants is a group.
-
-    See https://b.corp.google.com/issues/134133842
     """
     if not is_meeting(event):
         return False
@@ -217,8 +215,6 @@ def is_group_meeting(event):
     
     Note there are edge cases where this check is not accurate, such
     as a meeting where one of the two participants is a group.
-
-    See https://b.corp.google.com/issues/134133842
     """
     if not is_meeting(event):
         return False
